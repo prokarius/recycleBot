@@ -1,0 +1,11 @@
+click==6.7
+Flask==0.12.2
+itsdangerous==0.24
+Jinja2==2.9.6
+MarkupSafe==1.0
+numpy==1.13.0
+pkg-resources==0.0.0
+rivescript==1.14.7
+scikit-learn==0.18.1
+six==1.10.0
+Werkzeug==0.12.2
