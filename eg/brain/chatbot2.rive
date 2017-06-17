@@ -25,8 +25,8 @@
 - hi, you have subscribed to recyclebot, you will get tips throughout the day!
 
 + meal_tip	// triggered by meal time
-- [tip] it’s almost (lunchtime|dinnertime). you can use the water from rinsing fruits and vegetables to water your plants.
-- [tip] remember not to wash oil from your pots and pans down the drain. wipe them down with a paper towel first and throw the towel in the trash.
+- it’s almost (lunchtime|dinnertime). you can use the water from rinsing fruits and vegetables to water your plants.
+- remember not to wash oil from your pots and pans down the drain. wipe them down with a paper towel first and throw the towel in the trash.
 // (location? not home/at work?)
  
 + outing_tip	// triggered by location (!home)
@@ -34,13 +34,28 @@
 - if you want to recycle your plastic bottles, make sure to give them a rinse first to ensure they are clean on the inside.
 - remember to bring your own bag because plastic bags can’t be recycled.
 
++ claim rewards
+- please type "claim", and a space, followed by the 4 digit code given by your recycling bin.
+
++ claim #
+- <call>test <star></call>
+
+> object test python
+	p = str(args[0])
+	if len(p) != 4:
+		return "code is not the correct length"
+	elif int(p[0]) % 2 == 1:
+		return "invalid code"
+	else:
+		return p[-1] + "||q"
+< object
 
 + recycle
 - please tell me what you want to recycle.
 
 + [*] (food) [*]
 - food waste that cannot be avoided should be recycled as far as possible.
-
+- food waste can be made into compost, which will act as good fertilizer.
  
 + [*] (plastic|bottle|bag) [*]
 - please share your location with me to find the nearest bin. |||
@@ -57,7 +72,7 @@
 - please share your location with me to find the nearest bin. |||
 
 + event
-- do you want to create a reminder or join an event.
+- captain salvage at your service! ||a
 // quick reply: create reminder / join event
 
 + create reminder
