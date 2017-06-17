@@ -1,0 +1,90 @@
++ *
+- i'm not sure i understand you fully.
+- could you rephrase that?
+ 
++ (hello|hi|hey|howdy|hola|hai|yo) [*]
+- hi there, i’m recyclebot. please choose an option to find out more!
+
+// quick reply: subscribe to daily tips / i want to recycle something
+ 
++ daily tips
+- [tip] it takes just 1 week to create compost from food.
+- [tip] food waste that cannot be avoided should be recycled as far as possible.
+
++ i want to recycle something
+- tell me what you want to recycle.
+
++ [*] (sorry|apologize|apology) [*]
+- please don't apologize.
+- apologies are not necessary.
+- it did not bother me. please continue.
+ 
++ [*] (fuck|fucker|shit|damn|shut up|bitch) [*]
+- does it make you feel strong to use that kind of language...
+- are you venting your feelings now...
+- are you angry...
+- does this topic make you feel angry...
+- is something making you feel angry...
+- does using that kind of language make you feel better...
+ 
++ [*] (recycle|recycling|reuse|throw|dispose) [*]
+- please tell me what sort of waste you have.
+ 
+ 
++ [*] (food) [*]
+- [tip] it takes just 1 week to create compost from food.
+- [tip] food waste that cannot be avoided should be recycled as far as possible.
+- [tip] to support successful food waste recycling, food waste must be separated from contaminants such as disposable cutlery as this may interfere with the recycling process. segregation of food waste is best done at source (i.e. at the point of generation) as it is less efficient to separate it once it is mixed with general waste. 
+- [tip] last year, singapore generated 785,500 tonnes of food waste, and the nea said earlier this year that the amount of waste had increased 1.5 times in the past 10 years. 
+ 
++ [*] (plastic) [*]
+- please share your location with me to find the nearest bin. |||
+// - [tip] please remember to clean up the items before placing them into the bin. |||
+
++ [*] (metal|can|cans) [*]
+- please share your location with me to find the nearest bin. |||
+// this means to share location as a quick reply button
+ 
++ [*] (paper|cardboard|box) [*] 
+- please share your location with me to find the nearest bin. |||
+ 
++ [*] (electronic|computer|phone) [*]
+- please share your location with me to find the nearest bin. |||
+ 
++ [*] (locate the nearest ewaste point) [*]
+- please share your location with me to find the nearest bin. |||
+
+
+
+
+
+
+
+
+//	3. subscribe to tips / prompts
+ 
++ [*] subscribe to daily tips [*]
+- hi, you have subscribed to recyclebot. i will give you certain things to take note of throughout the day.
+
++ randomized tip // triggered by random
+- [tip] wash your items before putting them into the recycle bins.
+- [tip] reduce, reuse, recycle.
+
++ meal_tip	// triggered by meal time
+- [tip] it’s almost (lunchtime|dinnertime). you can use the water from rinsing fruits and vegetables to water your plants.
+- [tip] remember not to wash oil from your pots and pans down the drain. wipe them down with a paper towel first and throw the towel in the trash.
+// (location? not home/at work?)
+ 
++ outing_tip	// triggered by location (!home)
+- [tip] remember that food containers can not be recycled because of the oily residue on them. if you want to recycle your plastic bottles, make sure to give them a rinse first to ensure they are clean on the inside.
+- [tip] remember to bring your own bag because plastic bags can’t be recycled.
+ 
+//	4. set up a schedule
+ 
++ [*] (get started) [*]
+- hi, let’s plan a recycling schedule for your household, share your location.
+ 
++ [*] (recycling alert) [*]
+- create a calendar event
+- set a reminder
+- search nearby recycling bins
