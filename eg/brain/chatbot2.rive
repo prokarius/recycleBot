@@ -87,9 +87,10 @@
 
 + join event
 - how about this event nearby. ||x
-// display event. Depends if we can implement this in time. I htink
+// display event. Depends if we can implement this in time. I think
 
-
++ locationsend
+- these are some recycle bins nearby. ||l
 
 + [*] (sorry|apologize|apology) [*]
 - please don't apologize.
