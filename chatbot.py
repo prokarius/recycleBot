@@ -1,13 +1,14 @@
 from flask import Flask, request
 import requests
 from rivescript import RiveScript
+import json
 
 bot = RiveScript()
 bot.load_directory("./eg/brain")
 bot.sort_replies()
 #Relevant Parameters for HERE Technologies
-app_id="KJAW38LhkUzE9mqhLkhJ"
-app_code="JwkhODcTyZm4egOPsL5b-w"
+APP_ID="KJAW38LhkUzE9mqhLkhJ"
+APP_CODE="JwkhODcTyZm4egOPsL5b-w"
 latitude= 1
 longitude= 120
 #Relevant parameters for HERE technologies
@@ -24,24 +25,7 @@ def calculate_average ():
 		output += userlist[i]
 	return output / len(userlist)
 
-def send_recycle(latitude,longitude):
-    '''send location of nearest recycling bins '''
-    ''' minimum is  the minimum distance in coordinate units'''
-    list_of_coordinates=[[1.2965272,103.7848397],[1.2962203,103.7848397],[1.2965300,103.781241],[1.2965272,103.7823425],[1.2964362,103.7848397]] #Hard Coded Lord bless my soul
- 
-    for arr in list_of_coordinates:
-        if((arr[0]-latitude)**2 +(arr[1]-longitude)**2)<1: #no time to test this.
-            latitude=arr[0]
-            longitude=arr[1]
- 
-    return requests.get("https://image.maps.cit.api.here.com/mia/1.6/mapview?c=" +str(latitude)+"%2"+str(longitude)+"&z=14"+ "&app_id="+app_id+"&app_code="+app_code)
-
 ACCESS_TOKEN = "EAAXZBh5wBB74BACCysn5riSQsjmPt1igZCZCopKWzTW0InXultylLBnbvozZBwpOIu75JMGk62sZAgvyjtp2KHYJ5ezZCrWovgdGdP4zaTcigJEORYJiR0JYlSdefXgCrN2lcsS6BFMx70WlyOShS6aC6YP345nFtpbRgRkeMY5gZDZD" 
-
-def get_maps():
-	'''Return map image of location'''
-	return requests.get("https://image.maps.cit.api.here.com/mia/1.6/mapview?c=" +latitude+"%2"+longitude+"&z=14"+ "&app_id="+app_id+"&app_code="+app_code)
-
 
 def send_location(user_id):
     '''asks user to share location'''
@@ -95,8 +79,28 @@ def post_image (user_id, msg):
 	image = {"recipient":{"id":user_id},"message":{"attachment":{"type":"image","payload":{"url":msg}}}}
 	resp = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token=" + ACCESS_TOKEN, json=image)
 
-
-
+def generate_http(lat, lon):
+	print "\n\n\n"
+	# Generates the http link for the map image using HERE APIs.
+	with open('data.json') as data_file:    
+		data = json.load(data_file)
+		winners = [(10000,0,0),(10000,0,0),(10000,0,0),(10000,0,0),(10000,0,0),(10000,0,0)]		
+		for i in data:
+			x = (lat - float(i[1])) * 1000
+			y = (lon - float(i[0])) * 1000
+			d = x ** 2 + y ** 2
+			winners.append ((d, i[1], i[0]))
+			winners.sort()
+			winners.pop()
+	print winners
+	print "\n\n\n\n\n\n"		
+	poi = ""		
+	for i in range(6):
+		for j in [1,2]:
+			poi += str(winners[i][j])+ ","
+	pp = "https://image.maps.cit.api.here.com/mia/1.6/mapview?app_id=" + APP_ID + "&app_code=" + APP_CODE + "&lat=" + str(lat) + "&lon=" + str(lon) + "&poi=" + poi[:-1] + "&vt=0&z=19"
+	print pp	
+	return pp
 
 def reply_user(user_id,msg,lat, lon):
 	# Function to Reply the user. Checks for case of API calls beforehand.		
@@ -120,7 +124,7 @@ def reply_user(user_id,msg,lat, lon):
 		msg = "You have " + str(userlist[user_id]) + " points in total!"
 		flag = -3 #Duct Tape
 	elif "||w" in msg:
-		flag = 4
+		flag = -5 #Duct Tape
 	elif "||z" in msg:
 		flag = 5
 	elif "||e" in msg:
@@ -128,16 +132,16 @@ def reply_user(user_id,msg,lat, lon):
 		msg = msg [:-4]
 		post_message(user_id, msg)
 		msg = "https://goo.gl/EChDtd |||"
-	elif "||x" in msg:
+	elif "||x" in msg: #For the events thing
 		msg = msg [:-4]
 		post_message(user_id, msg)
 		msg = "https://goo.gl/m1UQWS"
 		post_image(user_id, msg)
 		return
-	elif "||l" in msg:
+	elif "||l" in msg: #To generate the HERE API call map.
 		msg = msg [:-4]
 		post_message(user_id, msg)
-		msg = "https://image.ibb.co/bJuiyQ/Here_Maps.png"
+		msg = generate_http(lat,lon)
 		post_image(user_id, msg)
 		return
 	elif "|||" in msg:
@@ -158,11 +162,11 @@ def reply_user(user_id,msg,lat, lon):
 	elif flag == 3:
 		choices_list = ["Create Reminder", "Join Event"]
 		title_text = "What do you want to do?"
-	elif flag == -3	: #Duct tape.
+	elif flag == -5	: #Duct tape.
 		avg = calculate_average ()
 		msg = "The Average score of users is " + str(avg)		
 		post_message (user_id, msg)
-	elif flag == 4:
+	elif flag == -3: #Duct Tape
 		choices_list = ["Show the average"]
 		title_text = "Want to see how you fare with the average?"
 	elif flag == 5:
@@ -184,14 +188,21 @@ def handle_verification():
 @app.route('/', methods=['POST'])
 def handle_incoming_messages():
     data = request.json
-    print data
+    latitude = 0 # initialise
+    longitude = 0 #initialise
     sender = data['entry'][0]['messaging'][0]['sender']['id']
-    message = data['entry'][0]['messaging'][0]['message']['text']
-#    latitude=data['entry'][0]['messaging'][0]['message']["attachments"][0]["payload"]["coordinates"]["lat"]
-#    longitude=data['entry'][0]['messaging'][0]['message']["attachments"][0]["payload"]["coordinates"]["long"]
-    # I cannot make this work. Im sorry.
-    latitude = 1.2965272
-    longitude = 103.7848397
+    try:    
+	message = data['entry'][0]['messaging'][0]['message']['text']
+    except (KeyError):
+        message = []
+    try:
+        latitude=data['entry'][0]['messaging'][0]['message']["attachments"][0]["payload"]["coordinates"]["lat"]
+        longitude=data['entry'][0]['messaging'][0]['message']["attachments"][0]["payload"]["coordinates"]["long"]
+        message = "locationsend"
+    except (KeyError):
+        pass
+    if message == []:
+        return "ok"
     reply = bot.reply("localuser", message)
     reply_user(sender, reply, latitude, longitude)
     return "ok"
