@@ -8,8 +8,8 @@ bot.sort_replies()
 #Relevant Parameters for HERE Technologies
 app_id="KJAW38LhkUzE9mqhLkhJ"
 app_code="JwkhODcTyZm4egOPsL5b-w"
-latitude=2
-longitude=3
+latitude= 1
+longitude= 120
 #Relevant parameters for HERE technologies
 app = Flask(__name__)
 
