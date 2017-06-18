@@ -13,7 +13,16 @@ longitude=3
 #Relevant parameters for HERE technologies
 app = Flask(__name__)
 
-userlist = {} #I'm doing whatever works now. Sorry.
+userlist = {1: 3} #I'm doing whatever works now. Sorry.
+		  #Placeholder value, because the thing might crash if 
+		  #the user screws around with his responses and accidentally 
+		  #triggers this function below (when no users)
+
+def calculate_average ():
+	output = 0	
+	for i in userlist:
+		output += userlist[i]
+	return output / len(userlist)
 
 ACCESS_TOKEN = "EAAXZBh5wBB74BACCysn5riSQsjmPt1igZCZCopKWzTW0InXultylLBnbvozZBwpOIu75JMGk62sZAgvyjtp2KHYJ5ezZCrWovgdGdP4zaTcigJEORYJiR0JYlSdefXgCrN2lcsS6BFMx70WlyOShS6aC6YP345nFtpbRgRkeMY5gZDZD" 
 
@@ -21,6 +30,23 @@ def get_maps():
 	'''Return map image of location'''
 	return requests.get("https://image.maps.cit.api.here.com/mia/1.6/mapview?c=" +latitude+"%2"+longitude+"&z=14"+ "&app_id="+app_id+"&app_code="+app_code)
 
+
+def send_location(user_id):
+    '''asks user to share location'''
+    location={
+    "recipient":{
+    "id":user_id
+    },
+    "message":{
+    "text":"Please share your location:",
+    "quick_replies":[
+      {
+        "content_type":"location",
+      }
+    ]
+    }
+    }
+    resp = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token=" + ACCESS_TOKEN, json=location)
 
 def quick_reply_API(user_id,list_of_text, displaytext):
 	"""
@@ -51,11 +77,12 @@ def post_message (user_id, msg):
 	# Probably.
 	data = {"recipient": {"id": user_id}, "message": {"text": msg}}
 	resp = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token=" + ACCESS_TOKEN, json=data)
+	print resp
 	
 
 def reply_user(user_id,msg):
 	# Function to Reply the user. Checks for case of API calls beforehand.		
-	flag = -1
+	flag = -10
 	msg = msg[0].upper() + msg[1:]
 	if "||s" in msg:
 		flag = 1
@@ -73,21 +100,52 @@ def reply_user(user_id,msg):
 		msg = "Congrats, You have earned " + msg[0] + " points"
 		post_message (user_id, msg)
 		msg = "You have " + str(userlist[user_id]) + " points in total!"
-	if flag != -1:
+		flag = -3 #Duct Tape
+	elif "||w" in msg:
+		flag = 4
+	elif "||z" in msg:
+		flag = 5
+	elif "||e" in msg:
+		flag = 6
 		msg = msg [:-4]
+		post_message(user_id, msg)
+		msg = "https://l.facebook.com/l.php?u=http%3A%2F%2Fwww.channelnewsasia.com%2Fnews%2Fsingapore%2Fwhy-is-singapore-s-household-recycling-rate-stagnant-7980106&h=ATMVHVD83U2yME6o78cV9EVre9YQyK3oeiPTYy3eyOv2kDThebjaXL6axKalSwS7W-GCujeWHitq_U502sItRL9aDwNtGEKrV810cubumNFc25NusrUwQMnl0_ZfuuaC6IA |||"
+	elif "|||" in msg:
+		flag = -2
+	if flag > -3: #Duct Tape
+		msg = msg [:-4] #Duct Tape
+		# Removes flags from the message if there are flags
+
 	post_message (user_id, msg)
+	#This is to post the message
+
 	if flag == 1:
 		choices_list = ["Recycle", "Daily Tips", "Event", "Claim Rewards"]
 		title_text = "Select what you would like help with."
 	elif flag == 2:
-		choices_list = ["Instant Tip", "Subscribe"]
+		choices_list = ["Instant Tip", "Subscribe", "Top Stories"]
 		title_text = "How may I help you with your tips?"
 	elif flag == 3:
 		choices_list = ["Create Reminder", "Join Event"]
 		title_text = "What do you want to do?"
-	if flag != -1:	
+	elif flag == -3	: #Duct tape.
+		avg = calculate_average ()
+		msg = "The Average score of users is " + str(avg)		
+		post_message (user_id, msg)
+	elif flag == 4:
+		choices_list = ["Show the average"]
+		title_text = "Want to see how you fare with the average?"
+	elif flag == 5:
+		choices_list = ["Get another tip", "Back to menu"]
+		title_text = "Would you like another tip?"
+	elif flag == 6:
+		choices_list = ["See more"]
+		title_text = "Would you like to see more stories?"
+	if flag > -2: #Duct Tape
 		quick_reply_API(user_id, choices_list, title_text)
-	print(resp.content)
+		# Posts the quick reply if necessary
+	elif flag == -2:
+		send_location(user_id)
 
 @app.route('/', methods=['GET'])
 def handle_verification():
@@ -96,9 +154,12 @@ def handle_verification():
 @app.route('/', methods=['POST'])
 def handle_incoming_messages():
     data = request.json
+    print data
     sender = data['entry'][0]['messaging'][0]['sender']['id']
-    message = data['entry'][0]['messaging'][0]['message']['text']
-    print message
+    try:
+        message = data['entry'][0]['messaging'][0]['message']['text']
+    except (KeyError):
+	pass
     reply = bot.reply("localuser", message)
     reply_user(sender, reply)
     return "ok"
