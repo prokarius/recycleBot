@@ -4,22 +4,29 @@
 + (thank) [*]
 - you are welcome.
 
-+ (hello|hi|hey|howdy|hola|hai|yo) [*]
++ show the average
+- here you go. ||w
+
++ (get started|[*] menu|main|hello|hi|hey|howdy|hola|hai|yo) [*]
 - hi there, this is recyclebot, please choose an option to find out more! ||s
 //Choices are recycle, daily tips and events
 
 + daily tips
 - captain salvage at your service. ||d
-// quick reply: instant tip /subscribe
+// quick reply: instant tip /subscribe/top stories
 
-+ instant tip
-- wash your items before putting them into the recycle bins.
-- reduce, reuse, recycle.
-- it takes just 1 week to create compost from food.
-- food waste that cannot be avoided should be recycled as far as possible.
-- to support successful food waste recycling, food waste must be separated from contaminants such as disposable cutlery as this may interfere with the recycling process. 
-- segregation of food waste is best done at source (i.e. at the point of generation) as it is less efficient to separate it once it is mixed with general waste. 
-- last year, singapore generated 785,500 tonnes of food waste, and reports say the amount of waste had increased 1.5 times in the past 10 years. 
++ (instant tip|get another tip)
+- wash your items before putting them into the recycle bins. ||z
+- reduce, reuse, recycle. ||z
+- it takes just 1 week to create compost from food. ||z
+- food waste that cannot be avoided should be recycled as far as possible. ||z
+- to support successful food waste recycling, food waste must be separated from contaminants such as disposable cutlery as this may interfere with the recycling process. ||z 
+- segregation of food waste is best done at source (i.e. at the point of generation) as it is less efficient to separate it once it is mixed with general waste. ||z
+- last year, singapore generated 785,500 tonnes of food waste, and reports say the amount of waste had increased 1.5 times in the past 10 years. ||z
+
++ top stories
+- here is the latest environmental news. ||e
+// Hard coded. Fuck my life.
 
 + subscribe
 - hi, you have subscribed to recyclebot, you will get tips throughout the day!
