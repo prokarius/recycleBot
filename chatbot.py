@@ -79,6 +79,10 @@ def post_message (user_id, msg):
 	resp = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token=" + ACCESS_TOKEN, json=data)
 	print resp
 	
+def post_image (user_id, msg):
+	image = {"recipient":{"id":user_id},"message":{"attachment":{"type":"image","payload":{"url":msg}}}}
+	resp = requests.post("https://graph.facebook.com/v2.6/me/messages?access_token=" + ACCESS_TOKEN, json=image)
+
 
 def reply_user(user_id,msg):
 	# Function to Reply the user. Checks for case of API calls beforehand.		
@@ -109,7 +113,13 @@ def reply_user(user_id,msg):
 		flag = 6
 		msg = msg [:-4]
 		post_message(user_id, msg)
-		msg = "https://l.facebook.com/l.php?u=http%3A%2F%2Fwww.channelnewsasia.com%2Fnews%2Fsingapore%2Fwhy-is-singapore-s-household-recycling-rate-stagnant-7980106&h=ATMVHVD83U2yME6o78cV9EVre9YQyK3oeiPTYy3eyOv2kDThebjaXL6axKalSwS7W-GCujeWHitq_U502sItRL9aDwNtGEKrV810cubumNFc25NusrUwQMnl0_ZfuuaC6IA |||"
+		msg = "https://goo.gl/EChDtd |||"
+	elif "||x" in msg:
+		msg = msg [:-4]
+		post_message(user_id, msg)
+		msg = "https://goo.gl/m1UQWS"
+		post_image(user_id, msg)
+		return
 	elif "|||" in msg:
 		flag = -2
 	if flag > -3: #Duct Tape
@@ -156,10 +166,7 @@ def handle_incoming_messages():
     data = request.json
     print data
     sender = data['entry'][0]['messaging'][0]['sender']['id']
-    try:
-        message = data['entry'][0]['messaging'][0]['message']['text']
-    except (KeyError):
-	pass
+    message = data['entry'][0]['messaging'][0]['message']['text']
     reply = bot.reply("localuser", message)
     reply_user(sender, reply)
     return "ok"
